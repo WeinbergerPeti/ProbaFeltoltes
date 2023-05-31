@@ -1,0 +1,352 @@
+OKJ vizsga jegyzet.
+
+https://github.com/WeinbergerPeti/JavaGyakorloDolgozat.git
+https://github.com/WeinbergerPeti/ReceptProbavizsga.git
+https://github.com/WeinbergerPeti/AlapProjekt.git
+https://github.com/WeinbergerPeti/IngatlanokProbavizsga.git
+_________________________
+JAVA
+
+Kép felugró ablakban:
+
+private void kilepesMIActionPerformed(java.awt.event.ActionEvent evt) {                                          
+        ImageIcon ikon = new ImageIcon("src/kep/kep.png");
+        int valasz = JOptionPane.showOptionDialog(rootPane, "Biztosan ki szeretnél lépni?", "Kilépés", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, ikon, null, null);
+        if(valasz == JOptionPane.YES_OPTION) System.exit(0);
+    }
+
+Noveny osztály:
+
+private String id;
+    private int ar;
+    private String nev;
+    private int kor;
+
+    public Noveny(String id, int ar, String nev, int kor) 
+    {
+        this.id = id;
+        this.ar = ar;
+        this.nev = nev;
+        this.kor = kor;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public int getAr() {
+        return ar;
+    }
+
+    public String getNev() {
+        return nev;
+    }
+
+    public int getKor() {
+        return kor;
+    }
+
+    public void setKor(int kor) {
+        this.kor = kor;
+    }
+
+    @Override
+    public String toString() {
+        return "Noveny{" + "id=" + id + ", ar=" + ar + ", nev=" + nev + ", kor=" + kor + '}';
+    }
+
+
+Kert osztály
+
+private ArrayList<Noveny> kertem = new ArrayList<>();
+
+    public Kert() 
+    {
+        kertem.add(new Noveny("ad14", 1000, "Pitypang", 20));
+        kertem.add(new Noveny("ad15", 1500, "Rózsa", 5));
+    }
+
+    public ArrayList<Noveny> getKertem()
+    {
+        return kertem;
+    }
+    
+    public void kerthezAd(Noveny noveny)
+    {
+        kertem.add(noveny);
+    }
+    
+    public void elad(String id)
+    {
+        int i=0;
+        boolean nincsMeg=true;
+        while(i<kertem.size() && nincsMeg)
+        {
+            if(kertem.get(i).getId().equals(id))
+            {
+                nincsMeg=false;
+                kertem.remove(i);
+            }
+            i++;
+        }
+    }
+    
+    public int getNovenyId(String id)
+    {
+        int i=0;
+        boolean nincsMeg=true;
+        int kor=0;
+        while(i<kertem.size() && nincsMeg)
+        {
+            if(kertem.get(i).getId().equals(id))
+            {
+                nincsMeg=false;
+                kor=kertem.get(i).getKor();
+            }
+            i++;
+        }
+        return kor;
+    }
+    public int getNovenyNev(String nev)
+    {
+        int i=0;
+        boolean nincsMeg=true;
+        int kor=0;
+        while(i<kertem.size() && nincsMeg)
+        {
+            if(kertem.get(i).getNev().equals(nev))
+            {
+                nincsMeg=false;
+                kor=kertem.get(i).getKor();
+            }
+            i++;
+        }
+        return kor;
+    }
+    
+    public void szerializalas()
+    {
+        FileOutputStream kiFajl;
+        try 
+        {
+            kiFajl = new FileOutputStream("kert.bin");
+            ObjectOutputStream kiObj = new ObjectOutputStream(kiFajl);
+            kiObj.writeObject(kertem);
+            kiObj.close();
+            kiFajl.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Kert.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Kert.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void deszerializalas()
+    {
+        FileInputStream beFajl;
+        try 
+        {
+            beFajl = new FileInputStream("kert.bin");
+            ObjectInputStream beObj = new ObjectInputStream(beFajl);
+            kertem = (ArrayList<Noveny>)beObj.readObject();
+            beObj.close();
+            beFajl.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Kert.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Kert.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Kert{" + "kertem=" + kertem + '}';
+    }
+
+
+KertForm
+
+private Kert kertem;
+    
+    public KertForm() {
+        initComponents();
+        kertem = new Kert();
+        
+        kertem.deszerializalas();
+        
+        DefaultComboBoxModel alapId = new DefaultComboBoxModel();
+        DefaultComboBoxModel alapNev = new DefaultComboBoxModel();
+        
+        for (Noveny noveny: kertem.getKertem()) 
+        {
+            alapId.addElement(noveny.getId());
+            alapNev.addElement(noveny.getNev());
+        }
+        
+        nevComboBox.setModel(alapNev);
+        idComboBox.setModel(alapId);
+    }
+
+
+private void kilepes() 
+   {
+        ImageIcon ikon = new ImageIcon("src/kep/kep.png");
+        int valasz = JOptionPane.showOptionDialog(rootPane, "Biztosan ki szeretnél lépni?", "Kilépés", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, ikon, null, null);
+        if(valasz == JOptionPane.YES_OPTION)
+        {
+            System.exit(0);
+        }
+        else 
+        {
+            setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        }
+    }
+
+
+Egyéb feladatok
+
+private void nevComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        
+        JComboBox nevCB = (JComboBox)evt.getSource();
+        nevCB.getSelectedItem();
+        korLbl.setText(String.format("Kor: %d", kertem.getNovenyNev((String) nevCB.getSelectedItem())));
+    }                                           
+
+    private void idComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        JComboBox idCB = (JComboBox)evt.getSource();
+        idCB.getSelectedItem();
+        korLbl.setText(String.format("Kor: %d", kertem.getNovenyId((String) idCB.getSelectedItem())));
+    }                                          
+
+    private void mentesMIActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        JFileChooser mentes = new JFileChooser();
+        int eredmeny = mentes.showSaveDialog(this);
+        
+        if (eredmeny == JFileChooser.APPROVE_OPTION ) 
+        {
+            try {
+                Files.createFile(mentes.getSelectedFile().toPath());
+                BufferedWriter fajlbaIr = Files.newBufferedWriter(mentes.getSelectedFile().toPath());
+                for (Noveny noveny : kertem.getKertem())
+                {
+                    fajlbaIr.write(noveny.toString());
+                }
+                fajlbaIr.close();
+            } catch (IOException ex) {
+                Logger.getLogger(KertForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }
+
+_________________________________________________________
+WEB PROGRAMOZÁS
+
+public function index()
+    {
+        $receptek=DB::table('receptek as r')
+        ->select('k.nev as kategoria_nev', 'r.*')
+        ->join('kategoriak as k', 'r.kat_id', 'k.id')
+        ->get();
+        return $receptek;
+    }
+
+__________________________
+
+public function kategoriaraSzures($kategoria)
+    {
+        $receptek=DB::table('receptek as r')
+        ->select('k.nev as kategoria_nev', 'r.*')
+        ->join('kategoriak as k', 'r.kat_id', 'k.id')
+        ->where('kat_id', $kategoria)
+        ->get();
+        return $receptek;
+    }
+
+__________________________
+
+constructor()
+    {
+        console.log("Controller");
+
+        const token= $(`meta[name="csrf-token"]`).attr("content");
+        const adatFeldolgozModel = new AdatFeldolgozModel(token);
+
+        adatFeldolgozModel.adatBe("/receptek", this.receptAdatok);
+
+        adatFeldolgozModel.adatBe("/kategoriak", this.kategoriaAdatok);
+
+        $(window).on("receptKivalasztasa", (event)=>
+        {
+            console.log(event.detail);
+            this.egyRecept(event.detail)
+        })
+
+        $(window).on("kategoriaSzures", (event)=>
+        {
+            console.log(event.detail);
+            if(event.detail==0)
+            {
+                adatFeldolgozModel.adatBe("/receptek", this.receptAdatok);
+            }
+            else
+            {
+                adatFeldolgozModel.adatBe("/kategoria_szures/"+event.detail, this.receptAdatok);
+            }
+        })
+    }
+
+__________________________
+
+constructor(tomb, szuloElem)
+    {
+        console.log("receptek");
+
+        console.log(tomb);
+
+        $(szuloElem).html(
+        `<table class="table">
+            <tr>
+                <th>Név</th>
+                <th>Kategória</th>
+                <th>Kép</th>
+                <th>Leírás</th>
+                <th>Kiválasztás</th>
+            </tr>
+        </table>`);
+
+        this.tablaElem=szuloElem.children("table:last-child");
+        this.tbodyElem=this.tablaElem.children("tbody");
+
+        tomb.forEach(elem => 
+        {
+            new ReceptSor(elem, this.tbodyElem);
+        });
+    }
+
+__________________________
+
+$(szuloElem).append(
+            `<tr>
+                <td>${elem.nev}</td>
+                <td>${elem.kategoria_nev}</td>
+                <td>${elem.kep_eleresi_ut}</td>
+                <td>${elem.leiras}</td>
+                <td><button id="gomb${elem.id}">Kiválasztás</button></td>
+            </tr>`
+        )
+
+        $(`#gomb${elem.id}`).on("click", ()=>
+        {
+            this.kattintasTrigger("receptKivalasztasa");
+        })
+__________________________
+
+kattintasTrigger(esemenyNeve)
+    {
+        const esemeny = new CustomEvent(esemenyNeve, {detail: this.#elem});
+        window.dispatchEvent(esemeny);
+    }
+
+
+
